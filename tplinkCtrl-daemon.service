@@ -1,0 +1,14 @@
+[Unit]
+Description=TP-Link Router Device Control Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/github/tplinkCtrl/src
+ExecStart=/usr/bin/python3 daemon.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
