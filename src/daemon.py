@@ -100,6 +100,24 @@ class TPLinkDaemon:
             logger.error(f"初始化控制器出错: {e}")
             return False
 
+    def relogin_controller(self) -> bool:
+        """
+        重新登录TPLinkController
+
+        Returns:
+            bool: 成功返回True，失败返回False
+        """
+        try:
+            if self.controller and self.controller.login():
+                logger.info("重新登录路由器成功")
+                return True
+            else:
+                logger.error("重新登录路由器失败")
+                return False
+        except Exception as e:
+            logger.error(f"重新登录控制器出错: {e}")
+            return False
+
     def _execute_task(self, device_mac: str, device_name: str, action: str) -> None:
         """
         执行设备控制任务
@@ -109,6 +127,10 @@ class TPLinkDaemon:
             device_name: 设备名称
             action: 操作 ('block' 或 'unblock')
         """
+        if self.relogin_controller() is False:
+            logger.error("无法执行任务，路由器登录失败")
+            return
+
         try:
             if action == "block":
                 success = self.controller.block_device(device_mac, device_name)
